@@ -21,7 +21,7 @@ const scraper = async (request) => {
         '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
       ],
       headless: false,
-      slowMo: 10,
+      slowMo: 1,
       defaultViewport: null,
       ignoreHTTPSErrors: true,
       stealth: true,

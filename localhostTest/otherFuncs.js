@@ -13,8 +13,10 @@ const newSearch = async (req, page, browser) => {
     await pDeadhead.select(req.body.originDeadhead)
   }
 
-  await page.click('input[placeholder="destination"]')
-  await page.type('input[placeholder="destination"]', req.body.destination)
+  if (req.body.destination) {
+    await page.click('input[placeholder="destination"]')
+    await page.type('input[placeholder="destination"]', req.body.destination)
+  }
 
   await page.waitForTimeout(1500)
   await page.keyboard.press('ArrowDown')

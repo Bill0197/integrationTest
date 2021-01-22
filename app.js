@@ -27,13 +27,12 @@ const scraper = async (request) => {
       stealth: true,
       ignoreDefaultArgs: ['--enable-automation'],
     })
+    const page = await browser.newPage()
     page.viewport({
       width: 1024 + Math.floor(Math.random() * 100),
       height: 768 + Math.floor(Math.random() * 100),
     })
     page.setDefaultNavigationTimeout(0)
-
-    const page = await browser.newPage()
 
     console.log(`Started ${await browser.version()}`)
 

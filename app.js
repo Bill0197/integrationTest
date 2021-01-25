@@ -11,9 +11,6 @@ const scraper = async (request) => {
         '--disable-gpu',
         '--disable-dev-shm-usage',
         '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
         '--disable-infobars',
         '--window-position=0,0',
         '--ignore-certifcate-errors',
@@ -21,7 +18,7 @@ const scraper = async (request) => {
         '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
       ],
       headless: false,
-      slowMo: 1,
+      slowMo: 55,
       defaultViewport: null,
       ignoreHTTPSErrors: true,
       stealth: true,
@@ -42,4 +39,7 @@ const scraper = async (request) => {
   }
 }
 
+module.exports = {
+  preset: 'jest-puppeteer',
+}
 module.exports = scraper

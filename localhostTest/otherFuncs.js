@@ -1,3 +1,5 @@
+require('expect-puppeteer')
+
 const newSearch = async (req, page, browser) => {
   console.log('Creating a new search...')
   await page.waitForSelector('[href="#/newsearch"] button', { timeout: 3000 })

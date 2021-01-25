@@ -2,7 +2,6 @@ const express = require('express')
 const tester = require('./app')
 const app = express()
 const bodyParser = require('body-parser')
-
 app.use(bodyParser.json())
 
 app.post('/scraper', async (req, res) => {

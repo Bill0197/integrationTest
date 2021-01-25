@@ -3,6 +3,8 @@ const puppeteer = require('puppeteer')
 
 jest.setTimeout(100000)
 
+let browser, page
+
 beforeAll(async () => {
   browser = await puppeteer.launch({
     headless: false,
@@ -29,6 +31,11 @@ beforeAll(async () => {
     height: 768 + Math.floor(Math.random() * 100),
   })
   await page.goto('http://localhost:3000/login')
+})
+
+afterAll(async () => {
+  browser.close()
+  console.log('Closed browser')
 })
 
 // testing login

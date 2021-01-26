@@ -5,34 +5,21 @@ jest.setTimeout(100000)
 
 let browser, page
 
+// before all runs
 beforeAll(async () => {
   browser = await puppeteer.launch({
     headless: false,
-    slowMo: 55,
+    slowMo: 15,
     defaultViewport: null,
-    ignoreHTTPSErrors: true,
-    stealth: true,
     ignoreDefaultArgs: ['--enable-automation'],
-    args: [
-      '--window-size=1440,810',
-      '--disable-gpu',
-      '--disable-dev-shm-usage',
-      '--no-sandbox',
-      '--disable-infobars',
-      '--window-position=0,0',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
-      '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-    ],
+    args: ['--window-size=1440,810'],
   })
   page = await browser.newPage()
-  page.viewport({
-    width: 1024 + Math.floor(Math.random() * 100),
-    height: 768 + Math.floor(Math.random() * 100),
-  })
+
   await page.goto('http://localhost:3000/login')
 })
 
+// after all runs
 afterAll(async () => {
   browser.close()
   console.log('Closed browser')
@@ -149,4 +136,60 @@ it('should delete search', async () => {
   const text = await page.evaluate(() => document.body.textContent)
 
   expect(text).toContain('No active searches found. Start a New Search')
+})
+
+// add loadboard
+it('should add loadboard', async () => {
+  await page.waitForTimeout(2000)
+
+  await page.click('[href="#/settings"]')
+
+  await page.waitForSelector('button.gdtwpF')
+
+  await page.click('button.gdtwpF')
+
+  await page.waitForSelector('[name="loadboard"]')
+
+  await page.click('[name="loadboard"]')
+
+  await page.keyboard.press('ArrowDown')
+
+  await page.keyboard.press('Enter')
+
+  await page.type('input[name="email"]', 'khabibullosaydullaev@gmail.com')
+
+  await page.type('input[name="password"]', '111111')
+
+  await page.click('button.hsXACn')
+
+  await page.waitForTimeout(2000)
+
+  const text = await page.evaluate(() => document.body.textContent)
+
+  expect(text).not.toContain('No Loadboards Yet')
+})
+
+// delete loadboard
+it('should delete loadboard', async () => {
+  await page.waitForTimeout(2000)
+
+  await page.waitForSelector('#buttonsWrapper > button.sc-dlfnbm.gNCVe')
+
+  await page.click('#buttonsWrapper > button.sc-dlfnbm.gNCVe')
+
+  await page.waitForTimeout(1000)
+
+  await page.waitForSelector(
+    '#DeleteModalContent > div:nth-child(2) > button.sc-dlfnbm.gNCVe'
+  )
+
+  await page.click(
+    '#DeleteModalContent > div:nth-child(2) > button.sc-dlfnbm.gNCVe'
+  )
+
+  await page.waitForTimeout(2000)
+
+  const text = await page.evaluate(() => document.body.textContent)
+
+  expect(text).toContain('No Loadboards Yet')
 })

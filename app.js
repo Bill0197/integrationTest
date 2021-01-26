@@ -1,11 +1,21 @@
+// const puppeteer = require('puppeteer')
+// const main = require('./localhostTest/index')
+const assert = require('assert')
 const puppeteer = require('puppeteer')
-const main = require('./localhostTest/index')
 
-const scraper = async (request) => {
-  try {
-    console.log('Executing the browser...')
+jest.setTimeout(100000)
 
-    const browser = await puppeteer.launch({
+let browser, page
+
+const BeforeAll = () => {
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 55,
+      defaultViewport: null,
+      ignoreHTTPSErrors: true,
+      stealth: true,
+      ignoreDefaultArgs: ['--enable-automation'],
       args: [
         '--window-size=1440,810',
         '--disable-gpu',
@@ -17,29 +27,29 @@ const scraper = async (request) => {
         '--ignore-certifcate-errors-spki-list',
         '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
       ],
-      headless: false,
-      slowMo: 55,
-      defaultViewport: null,
-      ignoreHTTPSErrors: true,
-      stealth: true,
-      ignoreDefaultArgs: ['--enable-automation'],
     })
-    const page = await browser.newPage()
+    page = await browser.newPage()
     page.viewport({
       width: 1024 + Math.floor(Math.random() * 100),
       height: 768 + Math.floor(Math.random() * 100),
     })
-    page.setDefaultNavigationTimeout(0)
+    await page.goto('http://localhost:3000/login')
+  })
+}
 
-    console.log(`Started ${await browser.version()}`)
-
-    await main(request, page, browser)
-  } catch (err) {
-    console.error(err)
-  }
+const AfterAll = () => {
+  afterAll(async () => {
+    browser.close()
+    console.log('Closed browser')
+  })
 }
 
 module.exports = {
   preset: 'jest-puppeteer',
 }
-module.exports = scraper
+module.exports = {
+  BeforeAll,
+  AfterAll,
+  page,
+  browser,
+}

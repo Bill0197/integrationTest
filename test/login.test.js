@@ -1,42 +1,10 @@
 const assert = require('assert')
 const puppeteer = require('puppeteer')
-
+const { BeforeAll, AfterAll, browser, page } = require('../app')
 jest.setTimeout(100000)
 
-let browser, page
-
-beforeAll(async () => {
-  browser = await puppeteer.launch({
-    headless: false,
-    slowMo: 55,
-    defaultViewport: null,
-    ignoreHTTPSErrors: true,
-    stealth: true,
-    ignoreDefaultArgs: ['--enable-automation'],
-    args: [
-      '--window-size=1440,810',
-      '--disable-gpu',
-      '--disable-dev-shm-usage',
-      '--no-sandbox',
-      '--disable-infobars',
-      '--window-position=0,0',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
-      '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-    ],
-  })
-  page = await browser.newPage()
-  page.viewport({
-    width: 1024 + Math.floor(Math.random() * 100),
-    height: 768 + Math.floor(Math.random() * 100),
-  })
-  await page.goto('http://localhost:3000/login')
-})
-
-afterAll(async () => {
-  browser.close()
-  console.log('Closed browser')
-})
+BeforeAll()
+AfterAll()
 
 // testing login
 test('test login', async () => {
@@ -54,14 +22,19 @@ test('test login', async () => {
 
   const url = await page.url()
 
-  await page.waitForTimeout(2000)
+  await page.waitForTimeout(4000)
 
   assert(url !== 'http://localhost:3000/')
 })
 
+it('should find text "Loadboard"', async () => {
+  const text = await page.evaluate(() => document.body.textContent)
+  expect(text).toContain('Loadboard')
+})
+
 // test creating new search
 test('test create new search', async () => {
-  await page.waitForSelector('[href="#/newsearch"] button', { timeout: 4000 })
+  await page.waitForSelector('[href="#/newsearch"] button', { timeout: 10000 })
   await page.click('[href="#/newsearch"] button')
 
   await page.waitForTimeout(1500)
@@ -109,4 +82,29 @@ test('test create new search', async () => {
   await page.waitForTimeout(2000)
 
   assert(url !== 'http://localhost:3000/#/searches')
+})
+
+// delete the search
+it('should delete search', async () => {
+  await page.waitForSelector('[href="#/newsearch"] button', { timeout: 10000 })
+  await page.click('[href="#/newsearch"] button')
+
+  await page.waitForTimeout(1500)
+
+  await page.click(
+    '#SearchCardWrapper > div > div.sc-crrsfI.DjvNf > button:nth-child(3) > span:nth-child(2)'
+  )
+
+  await page.waitForSelector(
+    '#DeleteModalContent > div:nth-child(2) > button.sc-dlfnbm.fLdiGP > span:nth-child(2)'
+  )
+
+  await page.waitForTimeout(1500)
+
+  await page.click(
+    '#DeleteModalContent > div:nth-child(2) > button.sc-dlfnbm.fLdiGP > span:nth-child(2)'
+  )
+
+  const text = await page.evaluate(() => document.body.textContent)
+  expect(text).toContain('No active searches found.')
 })
